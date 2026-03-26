@@ -26,6 +26,28 @@ Self-paced course on cloud-native architecture for experienced Java developers t
 
 Each lesson includes detailed explanations, diagrams, code examples (Java/Spring Boot), hands-on exercises, self-check questions, and answers.
 
+## Improved Lessons (v2)
+
+Enhanced versions with richer diagrams, more code examples, and detailed answers:
+
+| # | Lesson | Status |
+|---|--------|--------|
+| 00 | [Architect Knowledge Map](lessons-improved/00-architect-knowledge-map.md) | ✅ |
+| 01 | [Cloud-Native Fundamentals](lessons-improved/01-cloud-native-fundamentals.md) | ✅ |
+| 02 | [Architecture Styles & Patterns](lessons-improved/02-architecture-styles.md) | ✅ |
+| 03 | [Microservices Deep Dive](lessons-improved/03-microservices-deep-dive.md) | ✅ |
+| 04 | [Distributed Systems & Data](lessons-improved/04-distributed-systems-data.md) | ✅ |
+| 05 | Containers & Orchestration | 🔲 |
+| 06 | Cloud-Native Design Patterns | 🔲 |
+| 07 | API Design & Management | 🔲 |
+| 08 | Observability & Reliability | 🔲 |
+| 09 | Security | 🔲 |
+| 10 | Event-Driven Architecture | 🔲 |
+| 11 | CI/CD & GitOps | 🔲 |
+| 12 | Scalability & Performance | 🔲 |
+| 13 | Architecture Decisions & Documentation | 🔲 |
+| 14 | Cost Optimization & FinOps | 🔲 |
+
 ## Top Book Recommendations
 
 1. *Designing Data-Intensive Applications* — Martin Kleppmann
