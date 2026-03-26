@@ -124,15 +124,15 @@ Context Map        →  Service dependency diagram
 Anti-Corruption L. →  API adapter/translator between services
 ```
 
-### Your SAP Commerce Context
+### Enterprise Monolith Context
 
-SAP Commerce extensions map roughly to bounded contexts:
-- `catalog` extension → Catalog context
-- `order` extension → Order context
-- `payment` extension → Payment context
-- `warehousing` extension → Inventory/Shipping context
+In a typical enterprise e-commerce monolith, modules map roughly to bounded contexts:
+- Catalog module → Catalog context
+- Order module → Order context
+- Payment module → Payment context
+- Warehouse/Fulfillment module → Inventory/Shipping context
 
-**But** in Hybris, these share a database and type system. In microservices, each owns its data and communicates via APIs/events.
+**But** in a monolith, these modules typically share a single database and a common data model. In microservices, each service owns its data and communicates via APIs/events. The transition from shared database to per-service data ownership is one of the hardest challenges in decomposition.
 
 ---
 
@@ -599,13 +599,15 @@ Design the data ownership for microservices:
 3. What data needs to be replicated and how?
 4. How do you ensure data consistency across services?
 
-### Exercise 4: SAP Commerce Decomposition
+### Exercise 4: Monolith Decomposition
 
-Using your SAP Commerce knowledge, design a microservices decomposition for a Hybris-based e-commerce platform:
-1. Map Hybris extensions to bounded contexts
-2. Identify which extensions should become separate services vs. stay together
-3. Design the strangler fig migration plan (what to extract first and why)
-4. Address the shared type system / database challenge
+You are tasked with decomposing a large Spring Boot e-commerce monolith (500K+ LOC) into microservices. The monolith has these modules: catalog, order, payment, shipping, promotions, customer, and inventory — all sharing a single PostgreSQL database with 200+ tables and heavy use of foreign keys across module boundaries.
+
+Design a microservices decomposition:
+1. Map monolith modules to bounded contexts using domain analysis
+2. Identify which modules should become separate services vs. stay together (justify with coupling analysis)
+3. Design the strangler fig migration plan (what to extract first and why — consider risk, coupling, and business value)
+4. Address the shared database challenge: how do you break foreign key dependencies and maintain data consistency across services?
 
 ---
 

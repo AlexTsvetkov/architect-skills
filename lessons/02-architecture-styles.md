@@ -157,16 +157,16 @@ public Order getOrder(Long id) {
 
 **Rule of thumb:** If more than 20% of requests are sinkholes, consider a different architecture.
 
-### Your Context: SAP Commerce
+### Enterprise Monolith Context
 
-SAP Commerce uses layered architecture with:
-- Web layer (controllers, pages)
-- Facade layer (facade design pattern)
-- Service layer (business logic)
-- DAO layer (data access)
-- Model layer (type system)
+A typical enterprise Java application uses layered architecture with:
+- Web layer (controllers, REST endpoints, pages)
+- Facade layer (facade design pattern, DTOs)
+- Service layer (business logic, transaction management)
+- DAO/Repository layer (data access, JPA/Hibernate)
+- Domain model layer (entities, value objects)
 
-This is a well-structured layered monolith — but tight coupling between extensions through the shared type system prevents independent scaling and deployment.
+This is a well-structured layered monolith — but tight coupling between modules through the shared data model and database prevents independent scaling and deployment. Breaking out of the layered monolith requires first establishing clear module boundaries (modular monolith) before extracting microservices.
 
 ---
 

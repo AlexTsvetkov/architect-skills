@@ -360,7 +360,7 @@ Design a resilience strategy for a payment processing microservice:
 
 ### Exercise 2: Migration Plan
 
-You have a SAP Commerce monolith. Design a migration plan using cloud-native patterns:
+You have a large Spring Boot e-commerce monolith (500K+ LOC, single PostgreSQL database, 15 interconnected modules). Design a migration plan using cloud-native patterns:
 1. Which pattern would you use for incremental migration?
 2. What would you extract first and why?
 3. How would you handle the shared database?

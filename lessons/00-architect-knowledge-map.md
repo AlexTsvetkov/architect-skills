@@ -1,7 +1,7 @@
 # Cloud-Native Architect Knowledge Map
 
 > **For:** Experienced Java Developer / Team Lead transitioning to Cloud-Native Architecture  
-> **Background assumed:** Java ecosystem, SAP Commerce, SAP CAP, System Design (Alex Xu), partial DDIA (Kleppmann)  
+> **Background assumed:** Java ecosystem, enterprise application development, System Design (Alex Xu), partial DDIA (Kleppmann)  
 > **Goal:** Systematic mastery of cloud-native architecture principles and practices
 
 ---
@@ -23,8 +23,7 @@ Lessons are ordered from foundational → advanced. Your existing knowledge (mar
 | Area | Status | Source |
 |------|--------|--------|
 | Java ecosystem (Spring Boot, JPA, etc.) | ✅ Strong | Professional experience |
-| SAP Commerce (Hybris) — monolith architecture | ✅ Strong | Professional experience |
-| SAP CAP — cloud application model | ✅ Familiar | cap-tutorial project |
+| Enterprise monolith architecture | ✅ Strong | Professional experience |
 | System design fundamentals | ✅ Read | Alex Xu — System Design Interview |
 | Data-intensive applications | 🟡 Partial | Kleppmann DDIA (half read) |
 | Kubernetes / Containers | 🔲 To learn | — |
@@ -43,7 +42,7 @@ Lessons are ordered from foundational → advanced. Your existing knowledge (mar
 - Cloud-native vs. cloud-hosted vs. cloud-ready
 - The CNCF landscape and ecosystem
 - Comparing monolith → SOA → microservices → serverless evolution
-- **Connection to your experience:** How SAP Commerce monolith maps to cloud-native migration
+- **Connection to your experience:** How enterprise monoliths map to cloud-native migration
 
 ### Lesson 02: Architecture Styles & Patterns
 `lessons/02-architecture-styles.md`
@@ -57,7 +56,7 @@ Lessons are ordered from foundational → advanced. Your existing knowledge (mar
 - Space-based architecture
 - Micro-frontends
 - **Reference:** Microsoft Architecture Styles Guide mapping
-- **Connection to your experience:** SAP Commerce service layer → microservices decomposition
+- **Connection to your experience:** Monolith service layer → microservices decomposition
 
 ### Lesson 03: Microservices Architecture — Deep Dive
 `lessons/03-microservices-deep-dive.md`
@@ -70,7 +69,7 @@ Lessons are ordered from foundational → advanced. Your existing knowledge (mar
 - Distributed transactions — Saga pattern (choreography vs. orchestration)
 - Testing strategies: contract testing, integration testing, chaos engineering
 - Anti-patterns: distributed monolith, nano-services, shared databases
-- **Connection to your experience:** Decomposing SAP Commerce into bounded contexts
+- **Connection to your experience:** Decomposing a monolith into bounded contexts
 
 ---
 
@@ -102,7 +101,7 @@ Lessons are ordered from foundational → advanced. Your existing knowledge (mar
 - Event choreography vs. command orchestration
 - Stream processing: Kafka Streams, Apache Flink concepts
 - Idempotency patterns
-- **Connection to your experience:** SAP Commerce event system → Kafka-based architecture
+- **Connection to your experience:** Enterprise event systems → Kafka-based architecture
 
 ---
 
@@ -137,7 +136,7 @@ Lessons are ordered from foundational → advanced. Your existing knowledge (mar
 - Priority queue
 - Throttling / rate limiting
 - Valet key pattern
-- **Connection to your experience:** Migrating SAP Commerce using strangler fig
+- **Connection to your experience:** Migrating enterprise monoliths using strangler fig
 
 ### Lesson 08: Observability & Reliability Engineering
 `lessons/08-observability-reliability.md`
@@ -169,7 +168,7 @@ Lessons are ordered from foundational → advanced. Your existing knowledge (mar
 - API documentation: OpenAPI/Swagger
 - API evolution and backward compatibility
 - Consumer-driven contract testing (Pact)
-- **Connection to your experience:** SAP Commerce REST/OCC APIs → cloud-native API strategy
+- **Connection to your experience:** Enterprise REST APIs → cloud-native API strategy
 
 ### Lesson 09: Security in Cloud-Native Systems
 `lessons/09-security.md`

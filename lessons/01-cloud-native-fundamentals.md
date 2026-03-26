@@ -55,28 +55,28 @@ Cloud-native is **not** just "running your app in the cloud." It's a set of arch
 
 ### Key Principles
 
-| Principle | Description | Your SAP Commerce Context |
-|-----------|-------------|--------------------------|
-| **Design for failure** | Assume any component can crash. Build in retries, circuit breakers, fallbacks. | Hybris single-point-of-failure → distributed resilience |
-| **Cattle, not pets** | Servers are disposable and identical, not carefully maintained unique instances. | Named Hybris servers → anonymous container instances |
-| **Immutable infrastructure** | Never patch a running server. Replace it with a new one. | Manual Hybris patches → container image replacement |
+| Principle | Description | Enterprise Monolith Context |
+|-----------|-------------|----------------------------|
+| **Design for failure** | Assume any component can crash. Build in retries, circuit breakers, fallbacks. | Single-point-of-failure monolith → distributed resilience |
+| **Cattle, not pets** | Servers are disposable and identical, not carefully maintained unique instances. | Named application servers → anonymous container instances |
+| **Immutable infrastructure** | Never patch a running server. Replace it with a new one. | Manual server patches → container image replacement |
 | **Declarative configuration** | Describe the desired state, let the platform reconcile. | Imperative scripts → Kubernetes YAML / Terraform |
-| **Loose coupling** | Services interact through well-defined APIs, not shared databases. | Hybris shared DB → service-owned data stores |
+| **Loose coupling** | Services interact through well-defined APIs, not shared databases. | Shared monolith DB → service-owned data stores |
 
 ### Connecting to Your Experience
 
-**SAP Commerce (Hybris)** is a classic enterprise monolith:
+**A typical enterprise monolith** (think large Java EE or Spring applications deployed as WAR/EAR files) has these characteristics:
 - Single deployable unit (WAR/EAR)
-- Shared relational database (all extensions share tables)
+- Shared relational database (all modules share tables)
 - Vertical scaling (bigger server)
-- Long deployment cycles
-- Tight coupling between modules through the type system
+- Long deployment cycles (monthly or quarterly releases)
+- Tight coupling between modules through shared data models and libraries
 
-**SAP CAP** is a step toward cloud-native:
+**A modular monolith or service-oriented application** is a step toward cloud-native:
 - Service-based model definitions
-- Multi-tenancy support
-- Cloud Foundry / Kubernetes deployment
-- But still often deployed as a single service
+- Some external configuration
+- Containerized deployment possible
+- But still often deployed as a single service with a shared database
 
 **True cloud-native** goes further:
 - Each bounded context is an independent service
@@ -194,7 +194,7 @@ public class SessionConfig {
 }
 ```
 
-**Your SAP Commerce context:** Hybris often stores session state in the JVM. Cloud-native requires externalizing this to Redis or a similar store.
+**Enterprise monolith context:** Traditional Java application servers often store session state in the JVM's heap memory. Cloud-native requires externalizing this to Redis or a similar store, so any instance can serve any request.
 
 ### Factor 7: Port binding — Export services via port binding
 
@@ -352,20 +352,20 @@ Where does your application sit?
 Level 0: CLOUD HOSTILE
 ├── Hardcoded IPs, file-system dependencies
 ├── Manual deployment
-└── SAP Commerce on-premise (traditional)
+└── Traditional on-premise enterprise monolith
 
 Level 1: CLOUD READY
 ├── Externalized config
 ├── Uses managed services (DB, cache)
 ├── Containerized but still monolithic
-└── SAP Commerce on Cloud Foundry
+└── Enterprise monolith on Cloud Foundry or basic cloud VMs
 
 Level 2: CLOUD FRIENDLY
 ├── Follows 12-factor principles
 ├── Horizontal scaling works
 ├── CI/CD pipeline in place
 ├── Health checks and basic monitoring
-└── SAP CAP applications
+└── Modular Spring Boot applications with managed backing services
 
 Level 3: CLOUD NATIVE
 ├── Microservices architecture
@@ -434,14 +434,14 @@ The [CNCF landscape](https://landscape.cncf.io/) is overwhelming. Here's a curat
 MONOLITH (1990s-2000s)
 │  Everything in one deployable unit
 │  One database, one team, one release cycle
-│  Example: SAP Commerce / Hybris
+│  Example: Traditional Java EE monolith (e.g., large Spring/Hibernate WAR)
 │
 ├──→ SOA - Service Oriented Architecture (2000s-2010s)
 │    │  Enterprise Service Bus (ESB)
 │    │  SOAP/WSDL web services
 │    │  Shared data models (canonical data model)
 │    │  Still centralized governance
-│    │  Example: SAP PI/PO, IBM WebSphere
+│    │  Example: IBM WebSphere ESB, Oracle SOA Suite, MuleSoft
 │    │
 │    ├──→ MICROSERVICES (2010s-present)
 │    │    │  Small, independent services
@@ -486,7 +486,7 @@ MONOLITH (1990s-2000s)
 │  ├── Minimal changes to code                                 │
 │  ├── Still a monolith                                        │
 │  ├── Benefits: CapEx → OpEx, basic elasticity                │
-│  └── Example: SAP Commerce on AWS EC2                        │
+│  └── Example: Enterprise Java monolith on AWS EC2            │
 │                                                              │
 │  CLOUD-READY (Lift, Shift & Optimize)                        │
 │  ├── Containerized application                               │
@@ -494,7 +494,7 @@ MONOLITH (1990s-2000s)
 │  ├── Externalized configuration                              │
 │  ├── Auto-scaling configured                                 │
 │  ├── Benefits: better resource utilization, managed ops       │
-│  └── Example: SAP Commerce on Kubernetes, CAP on CF          │
+│  └── Example: Containerized monolith on Kubernetes           │
 │                                                              │
 │  CLOUD-NATIVE (Re-architect)                                 │
 │  ├── Microservices architecture                              │
@@ -526,7 +526,7 @@ MONOLITH (1990s-2000s)
 
 ### Exercise 1: 12-Factor Audit
 
-Take a Java application you've worked on (e.g., from your SAP Commerce experience) and audit it against all 12 factors. For each factor:
+Take a Java application you've worked on (e.g., a Spring Boot monolith or enterprise application) and audit it against all 12 factors. For each factor:
 1. Rate compliance: ✅ Compliant / 🟡 Partially / ❌ Non-compliant
 2. Describe what would need to change to achieve compliance
 3. Estimate the effort (Low / Medium / High)
@@ -536,8 +536,8 @@ Take a Java application you've worked on (e.g., from your SAP Commerce experienc
 ### Exercise 2: Cloud-Native Maturity Assessment
 
 Using the maturity model from Section 4, assess two systems:
-1. A traditional SAP Commerce deployment
-2. Your SAP CAP tutorial application
+1. A traditional enterprise monolith deployed on-premise or on VMs
+2. A containerized Spring Boot application with CI/CD pipeline
 
 For each level (0-4), document:
 - Which criteria are met
@@ -601,7 +601,7 @@ Answer these questions without looking at the notes. Then check your answers in 
 
 9. Explain the "cattle, not pets" principle. How does it relate to immutable infrastructure?
 
-10. What level of the cloud-native maturity model would you assign to: (a) a VM-based Hybris deployment, (b) a containerized Spring Boot app with CI/CD, (c) a serverless event-driven architecture?
+10. What level of the cloud-native maturity model would you assign to: (a) a VM-based enterprise monolith, (b) a containerized Spring Boot app with CI/CD, (c) a serverless event-driven architecture?
 
 ---
 
@@ -615,7 +615,7 @@ The four pillars are:
 4. **DevOps** — culture of shared ownership between dev and ops
 
 ### Answer 2
-- **Cloud-hosted:** A traditional monolithic application running on cloud VMs with minimal code changes. Example: SAP Commerce deployed on AWS EC2 instances — same WAR file, same architecture, just different hardware.
+- **Cloud-hosted:** A traditional monolithic application running on cloud VMs with minimal code changes. Example: An enterprise Java monolith deployed on AWS EC2 instances — same WAR file, same architecture, just different hardware.
 - **Cloud-native:** An application built from the ground up to leverage cloud capabilities — microservices, containers, event-driven, auto-scaling. Example: A microservices-based e-commerce platform on Kubernetes with each service independently deployable and scalable.
 
 The key difference: cloud-hosted is about *where* it runs, cloud-native is about *how* it's built.
@@ -719,7 +719,7 @@ This only works if servers are "cattle" — you must be able to destroy and recr
 4. Kubernetes replaces old pods with new ones
 
 ### Answer 10
-- **(a) VM-based Hybris deployment:** **Level 0-1 (Cloud Hostile to Cloud Ready)**
+- **(a) VM-based enterprise monolith:** **Level 0-1 (Cloud Hostile to Cloud Ready)**
   - Level 0 if on-premises with hardcoded configs
   - Level 1 if migrated to cloud VMs with externalized DB config
   - Still a monolith, likely manual deployments, limited scaling
@@ -745,7 +745,7 @@ This only works if servers are "cattle" — you must be able to destroy and recr
 1. **Cloud-native is a mindset**, not a technology. It's about designing for the cloud's strengths (elasticity, managed services, automation).
 2. **The 12-Factor methodology** is your checklist — audit every application against it.
 3. **Not everything needs to be cloud-native.** The maturity model helps you choose the right level for each workload.
-4. **Your SAP experience is valuable.** Understanding monolith pain points makes you better at designing cloud-native solutions. The anti-patterns you've seen become the motivation for cloud-native principles.
+4. **Your enterprise experience is valuable.** Understanding monolith pain points makes you better at designing cloud-native solutions. The anti-patterns you've seen in large enterprise systems become the motivation for cloud-native principles.
 5. **Start with the strangler fig pattern** — don't do big-bang rewrites.
 
 ---
