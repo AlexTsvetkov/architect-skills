@@ -116,9 +116,9 @@ Rule: Start at Level 1 for stakeholders, Level 2 for architects,
 ┌──────────────────── E-Commerce Platform ────────────────────┐
 │                                                              │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
-│  │ Web App  │  │ Order    │  │ Product  │  │ Payment  │   │
-│  │ (React)  │  │ Service  │  │ Service  │  │ Service  │   │
-│  │          │  │ (Java)   │  │ (Java)   │  │ (Java)   │   │
+│  │ API      │  │ Order    │  │ Product  │  │ Payment  │   │
+│  │ Gateway  │  │ Service  │  │ Service  │  │ Service  │   │
+│  │ (Java)   │  │ (Java)   │  │ (Java)   │  │ (Java)   │   │
 │  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘   │
 │       │              │              │              │         │
 │       └──────────────┼──────────────┼──────────────┘         │

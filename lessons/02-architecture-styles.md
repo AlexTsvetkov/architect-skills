@@ -18,7 +18,7 @@
 7. [Big Data Architectures](#7-big-data-architectures)
 8. [Choreography vs. Orchestration](#8-choreography-vs-orchestration)
 9. [Space-Based Architecture](#9-space-based-architecture)
-10. [Micro-Frontends](#10-micro-frontends)
+10. [Modular Monolith](#10-modular-monolith)
 11. [Choosing the Right Style](#11-choosing-the-right-style)
 12. [Exercises](#12-exercises)
 13. [Self-Check Questions](#13-self-check-questions)
@@ -719,47 +719,113 @@ Designed for applications with high and unpredictable concurrent user loads. Rem
 
 ---
 
-## 10. Micro-Frontends
+## 10. Modular Monolith
 
 ### Overview
 
-Apply microservices principles to the frontend. Each team owns a vertical slice — from UI to database.
+A modular monolith is a single deployable unit with well-defined internal module boundaries. It combines the simplicity of a monolith with the structural discipline of microservices.
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                    Application Shell                  │
-│  ┌─────────────┐  ┌──────────────┐  ┌────────────┐ │
-│  │  Product     │  │   Cart       │  │  Account   │ │
-│  │  Micro-FE   │  │   Micro-FE   │  │  Micro-FE  │ │
-│  │  (React)    │  │   (Vue)      │  │  (Angular) │ │
-│  └──────┬──────┘  └──────┬───────┘  └─────┬──────┘ │
-└─────────┼────────────────┼─────────────────┼────────┘
-          │                │                 │
-     ┌────┴────┐     ┌────┴────┐       ┌───┴─────┐
-     │ Product │     │  Cart   │       │ Account │
-     │ Service │     │ Service │       │ Service │
-     │ (Team A)│     │(Team B) │       │(Team C) │
-     └─────────┘     └─────────┘       └─────────┘
+┌──────────────────────── Single Deployable (JAR/WAR) ───────────────────────┐
+│                                                                             │
+│  ┌─────────────┐  ┌──────────────┐  ┌────────────┐  ┌────────────┐       │
+│  │  Catalog     │  │   Order      │  │  Payment   │  │  Shipping  │       │
+│  │  Module      │  │   Module     │  │  Module    │  │  Module    │       │
+│  │             │  │              │  │            │  │            │       │
+│  │ Controller  │  │ Controller   │  │ Controller │  │ Controller │       │
+│  │ Service     │  │ Service      │  │ Service    │  │ Service    │       │
+│  │ Repository  │  │ Repository   │  │ Repository │  │ Repository │       │
+│  │ Domain Model│  │ Domain Model │  │ Domain Mod │  │ Domain Mod │       │
+│  └──────┬──────┘  └──────┬───────┘  └─────┬──────┘  └─────┬──────┘       │
+│         │                │                 │               │               │
+│         └────────────────┴─────────────────┴───────────────┘               │
+│                          │                                                  │
+│                    ┌─────┴──────┐                                           │
+│                    │ Shared DB  │  (but module-owned schemas/tables)        │
+│                    └────────────┘                                           │
+└─────────────────────────────────────────────────────────────────────────────┘
 
-Each team: owns UI + API + data + deployment
+Key: Modules communicate through well-defined internal APIs (Java interfaces),
+NOT by reaching into each other's database tables or internal classes.
 ```
 
-### Integration Approaches
+### Key Principles
 
-| Approach | Description | Pros | Cons |
-|----------|-------------|------|------|
-| **Build-time** | NPM packages composed at build | Type safety, simple | Coupled deployments |
-| **Server-side** | SSI, ESI, or server-composed HTML | Good SEO, fast | Complex server setup |
-| **Run-time (iframe)** | Each micro-FE in an iframe | Full isolation | Poor UX, styling challenges |
-| **Run-time (JS)** | Module Federation (Webpack 5) | Independent deploy, shared deps | Complex configuration |
-| **Web Components** | Custom elements | Framework agnostic | Browser support, style encapsulation |
+1. **Strong module boundaries** — each module has a public API (Java interface) and hides its internals
+2. **Module-owned data** — each module owns its database tables; no cross-module table access
+3. **Enforced boundaries** — use Java module system (JPMS), ArchUnit, or multi-module Maven/Gradle projects
+4. **Internal communication** — modules call each other through interfaces, not database JOINs
+
+### Spring Boot Implementation
+
+```
+my-app/
+├── catalog-module/
+│   ├── src/main/java/com/example/catalog/
+│   │   ├── api/          ← Public API (interfaces, DTOs)
+│   │   ├── internal/     ← Hidden implementation
+│   │   │   ├── service/
+│   │   │   ├── repository/
+│   │   │   └── domain/
+│   │   └── CatalogModuleConfiguration.java
+│   └── pom.xml
+├── order-module/
+│   ├── src/main/java/com/example/order/
+│   │   ├── api/
+│   │   ├── internal/
+│   │   └── OrderModuleConfiguration.java
+│   └── pom.xml
+├── payment-module/
+│   └── ...
+└── pom.xml  (parent)
+```
+
+### Enforcing Boundaries with ArchUnit
+
+```java
+@AnalyzeClasses(packages = "com.example")
+class ModuleBoundaryTest {
+
+    @ArchTest
+    static final ArchRule orderModuleDoesNotAccessCatalogInternals =
+        noClasses().that().resideInAPackage("..order..")
+            .should().accessClassesThat().resideInAPackage("..catalog.internal..");
+
+    @ArchTest
+    static final ArchRule modulesOnlyCommunicateThroughApis =
+        noClasses().that().resideInAPackage("..internal..")
+            .should().beAccessedByClassesThat().resideOutsideOfPackage("..internal..");
+}
+```
 
 ### When to Use
 
-- Large teams (5+ teams working on same frontend)
-- Need independent frontend deployments
-- Different parts of the UI have different technology needs
-- Legacy migration (wrap old UI in micro-FE)
+- Team size is small to medium (1-3 teams, up to ~20 developers)
+- Domain boundaries are not yet fully understood
+- Operational maturity is not ready for microservices (no Kubernetes, no CI/CD per service)
+- You want a stepping stone toward microservices — prove boundaries before extracting services
+- Strong consistency requirements across modules
+
+### Strengths & Weaknesses
+
+| ✅ Strengths | ❌ Weaknesses |
+|-------------|--------------|
+| Simple deployment and operations | Single deployable — one slow module blocks all |
+| Easy local development and debugging | Cannot scale modules independently |
+| ACID transactions across modules | Technology diversity limited (all Java) |
+| Lower infrastructure cost | Requires discipline to maintain boundaries |
+| Good stepping stone to microservices | Team autonomy limited by shared codebase |
+| Easier testing than microservices | |
+
+### Modular Monolith → Microservices Migration Path
+
+```
+Phase 1: Monolith → establish module boundaries, enforce with ArchUnit
+Phase 2: Modular Monolith → modules communicate via interfaces, own their tables
+Phase 3: Extract → replace interface calls with REST/gRPC/events, deploy independently
+```
+
+The modular monolith is the **recommended starting point** before microservices. It lets you discover and validate bounded contexts within the safety of a single deployment.
 
 ---
 
@@ -791,8 +857,8 @@ START
   ├─ Extreme spiky loads (ticketing, auctions)?
   │   └─ YES → Space-Based Architecture
   │
-  └─ Multiple teams need frontend autonomy?
-      └─ YES → Micro-Frontends
+  └─ Need clear module boundaries without distributed complexity?
+      └─ YES → Modular Monolith
 ```
 
 ### Architecture Style Comparison Matrix

@@ -54,7 +54,6 @@ Lessons are ordered from foundational → advanced. Your existing knowledge (mar
 - Web-queue-worker
 - Choreography vs. orchestration (Saga patterns)
 - Space-based architecture
-- Micro-frontends
 - **Reference:** Microsoft Architecture Styles Guide mapping
 - **Connection to your experience:** Monolith service layer → microservices decomposition
 
