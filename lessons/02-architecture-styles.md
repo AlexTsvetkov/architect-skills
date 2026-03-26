@@ -18,11 +18,12 @@
 7. [Big Data Architectures](#7-big-data-architectures)
 8. [Choreography vs. Orchestration](#8-choreography-vs-orchestration)
 9. [Space-Based Architecture](#9-space-based-architecture)
-10. [Modular Monolith](#10-modular-monolith)
-11. [Choosing the Right Style](#11-choosing-the-right-style)
-12. [Exercises](#12-exercises)
-13. [Self-Check Questions](#13-self-check-questions)
-14. [Answers](#14-answers)
+10. [Micro-Frontends](#10-micro-frontends)
+11. [Modular Monolith](#11-modular-monolith)
+12. [Choosing the Right Style](#12-choosing-the-right-style)
+13. [Exercises](#13-exercises)
+14. [Self-Check Questions](#14-self-check-questions)
+15. [Answers](#15-answers)
 
 ---
 
@@ -719,7 +720,51 @@ Designed for applications with high and unpredictable concurrent user loads. Rem
 
 ---
 
-## 10. Modular Monolith
+## 10. Micro-Frontends
+
+### Overview
+
+Apply microservices principles to the frontend. Each team owns a vertical slice — from UI to database.
+
+```
+┌─────────────────────────────────────────────────────┐
+│                    Application Shell                  │
+│  ┌─────────────┐  ┌──────────────┐  ┌────────────┐ │
+│  │  Product     │  │   Cart       │  │  Account   │ │
+│  │  Micro-FE   │  │   Micro-FE   │  │  Micro-FE  │ │
+│  │  (React)    │  │   (Vue)      │  │  (Angular) │ │
+│  └──────┬──────┘  └──────┬───────┘  └─────┬──────┘ │
+└─────────┼────────────────┼─────────────────┼────────┘
+          │                │                 │
+     ┌────┴────┐     ┌────┴────┐       ┌───┴─────┐
+     │ Product │     │  Cart   │       │ Account │
+     │ Service │     │ Service │       │ Service │
+     │ (Team A)│     │(Team B) │       │(Team C) │
+     └─────────┘     └─────────┘       └─────────┘
+
+Each team: owns UI + API + data + deployment
+```
+
+### Integration Approaches
+
+| Approach | Description | Pros | Cons |
+|----------|-------------|------|------|
+| **Build-time** | NPM packages composed at build | Type safety, simple | Coupled deployments |
+| **Server-side** | SSI, ESI, or server-composed HTML | Good SEO, fast | Complex server setup |
+| **Run-time (iframe)** | Each micro-FE in an iframe | Full isolation | Poor UX, styling challenges |
+| **Run-time (JS)** | Module Federation (Webpack 5) | Independent deploy, shared deps | Complex configuration |
+| **Web Components** | Custom elements | Framework agnostic | Browser support, style encapsulation |
+
+### When to Use
+
+- Large teams (5+ teams working on same frontend)
+- Need independent frontend deployments
+- Different parts of the UI have different technology needs
+- Legacy migration (wrap old UI in micro-FE)
+
+---
+
+## 11. Modular Monolith
 
 ### Overview
 
@@ -829,7 +874,7 @@ The modular monolith is the **recommended starting point** before microservices.
 
 ---
 
-## 11. Choosing the Right Style
+## 12. Choosing the Right Style
 
 ### Decision Framework
 
@@ -857,6 +902,9 @@ START
   ├─ Extreme spiky loads (ticketing, auctions)?
   │   └─ YES → Space-Based Architecture
   │
+  ├─ Multiple teams need frontend autonomy?
+  │   └─ YES → Micro-Frontends
+  │
   └─ Need clear module boundaries without distributed complexity?
       └─ YES → Modular Monolith
 ```
@@ -875,7 +923,7 @@ START
 
 ---
 
-## 12. Exercises
+## 13. Exercises
 
 ### Exercise 1: Architecture Style Mapping
 
@@ -936,7 +984,7 @@ Document:
 
 ---
 
-## 13. Self-Check Questions
+## 14. Self-Check Questions
 
 1. Name five architecture quality attributes and explain how they might conflict with each other.
 
@@ -960,7 +1008,7 @@ Document:
 
 ---
 
-## 14. Answers
+## 15. Answers
 
 ### Answer 1
 
